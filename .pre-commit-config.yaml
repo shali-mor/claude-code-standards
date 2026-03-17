@@ -46,9 +46,10 @@ repos:
     rev: v9.18.0
     hooks:
       - id: commitlint
-        name: "Enforce conventional commit messages"
+        name: "Enforce Jira-prefixed commit messages"
         stages: [commit-msg]
         additional_dependencies: ['@commitlint/config-conventional']
+        args: ['--config', 'commitlint.config.js']
 
   # -- Shell Script Linting ---------------------------------------------------
   - repo: https://github.com/shellcheck-py/shellcheck-py
@@ -73,6 +74,13 @@ repos:
   # ── Block .tfstate commits ─────────────────────────────────────────
   - repo: local
     hooks:
+      - id: branch-naming
+        name: "Enforce branch naming convention"
+        entry: bash -c 'BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null); if [ -z "$BRANCH" ]; then exit 0; fi; if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then exit 0; fi; if ! echo "$BRANCH" | grep -qE "^(feature|bugfix|hotfix)/[A-Z]{2,}-[0-9]+-[a-z0-9-]+$"; then echo "BLOCKED: Branch name \"$BRANCH\" does not match pattern: feature/NEO-1234-short-description" >&2; exit 1; fi; exit 0'
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
       - id: no-tfstate
         name: "Block .tfstate files"
         entry: bash -c 'echo "BLOCKED: .tfstate files must not be committed" >&2 && exit 1'

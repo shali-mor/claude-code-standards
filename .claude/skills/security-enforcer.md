@@ -65,3 +65,56 @@ For every new log statement, verify:
 - Lambda: no `*` permissions, use least-privilege execution roles
 - API Gateway: authentication on all non-health-check routes
 - IoT Core: per-device X.509 certificates, not shared credentials
+
+## Web Security Enforcement
+
+### CSRF Protection
+When writing or reviewing state-changing endpoints (POST, PUT, DELETE, PATCH):
+- Verify CSRF protection is present (synchronizer token, SameSite cookie, or custom header validation)
+- If the endpoint uses cookie-based auth, CSRF protection is mandatory — refuse to write without it
+- Bearer token (Authorization header) endpoints are exempt
+
+### CORS Configuration
+When writing or reviewing CORS configuration:
+- BLOCK any CORS config with `*` as allowed origin in production code
+- BLOCK `Access-Control-Allow-Credentials: true` combined with `Access-Control-Allow-Origin: *`
+- Allowed origins must be explicitly listed, not dynamically reflected from request
+
+### Rate Limiting
+When writing new external-facing endpoints:
+- Flag if no rate limiting middleware/decorator is applied
+- Authentication endpoints must have stricter limits than data endpoints
+- Remind to include `X-RateLimit-*` headers in responses
+
+### Secure Deserialization
+When writing Java code that handles external input:
+- BLOCK usage of `ObjectInputStream`, `readObject()`, or `java.io.Serializable` for untrusted data
+- BLOCK Jackson `enableDefaultTyping()` or `@JsonTypeInfo` with `Id.CLASS` / `Id.MINIMAL_CLASS`
+- Only allow JSON/Protobuf/Avro deserialization with explicit type binding
+
+### Secure HTTP Headers
+When writing HTTP response configuration or middleware:
+- Flag missing security headers: HSTS, CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy
+- BLOCK `X-Frame-Options: ALLOWALL` or missing frame protection on auth pages
+- BLOCK CSP with `unsafe-inline` and `unsafe-eval` together in production
+
+### File Upload Validation
+When writing file upload handlers:
+- BLOCK if file type is validated only by extension (must check magic bytes / content type)
+- BLOCK if uploaded files are stored with user-provided filenames (path traversal risk)
+- Flag missing file size limits
+- Flag if uploads are stored inside the web root / public directory
+
+### Cryptographic Standards
+When writing code involving encryption, hashing, or TLS:
+- BLOCK usage of MD5 or SHA-1 for security purposes (passwords, signatures, integrity)
+- BLOCK TLS versions below 1.2 in configuration
+- BLOCK hardcoded encryption keys or IVs
+- Flag custom crypto implementations — must use established libraries (BouncyCastle, AWS KMS SDK, etc.)
+
+### Session Management
+When writing session/auth token handling:
+- BLOCK session tokens stored in localStorage (use httpOnly cookies or secure token storage)
+- Flag missing session timeout configuration
+- Flag if logout does not invalidate server-side session
+- Flag missing concurrent session limits for admin/tenant-scoped sessions
