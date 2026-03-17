@@ -40,3 +40,28 @@ Before presenting the code, run the `/review` command mentally against your own 
 - Sensitive data handled per classification?
 
 If any check fails, fix it before showing the code to the user.
+
+## Output Format
+
+Present the design as:
+```
+FEATURE: <feature name>
+
+SCOPE:
+  Layers: <domain / usecase / adapter / frontend>
+  Module: <target module or bounded context>
+  New API: <yes / no>
+
+DESIGN:
+  Domain changes: <entities, value objects, events>
+  Ports: <new input/output ports>
+  Use case: <application service description>
+  Adapters: <controllers, repositories, clients>
+  DTOs: <request/response shapes>
+
+TEST PLAN:
+  - <what to test at each layer>
+
+RISKS:
+  - <anything that needs attention>
+```

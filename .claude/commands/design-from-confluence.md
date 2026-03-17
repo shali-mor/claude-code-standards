@@ -1,5 +1,8 @@
 Design a new feature based on existing architecture patterns from Confluence.
 
+## Arguments
+$ARGUMENTS — Feature description or keywords to search for existing patterns
+
 ## Key Confluence Spaces
 When searching for Cloud DLP architecture and patterns, prioritize:
 - **IT** — Infrastructure architecture docs (Cloud DLP Architecture, DPS architecture and deployment, DPS in Detail)

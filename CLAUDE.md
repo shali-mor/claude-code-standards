@@ -27,6 +27,11 @@ These rules apply to ALL repositories. Claude MUST refuse to write code that vio
 - All external-facing APIs MUST be versioned (`/api/v1/...`)
 - Request/response DTOs are separate from domain models — never expose domain entities directly
 - Breaking changes require a new API version, not modification of existing endpoints
+- All list endpoints must support pagination — use cursor-based pagination by default
+- POST and PUT operations must support idempotency keys via `Idempotency-Key` header
+- Error responses must follow a standard envelope: `{ "error": { "code": "POLICY_NOT_FOUND", "message": "...", "traceId": "...", "details": [...] } }`
+- Include `X-Request-Id` / `X-Trace-Id` in all responses for correlation
+- Document deprecation via `Sunset` header and minimum 6-month support window for deprecated versions
 
 ### Error Handling
 - Use domain-specific exception/error types, not generic exceptions
@@ -60,6 +65,63 @@ These are mandatory for a security company. Violations are blocking.
 - No dependencies with known critical/high CVEs
 - Pin dependency versions — no floating ranges in production
 - Minimal dependency principle: justify every new dependency
+
+### CSRF Protection
+- All state-changing endpoints (POST, PUT, DELETE, PATCH) must include CSRF protection
+- Use synchronizer token pattern or SameSite cookie attribute
+- Single-page apps: use custom request headers (e.g., `X-Requested-With`) validated server-side
+- API-only endpoints authenticated via Bearer tokens are exempt (tokens are not auto-sent by browsers)
+
+### CORS Policy
+- CORS origins must be explicitly allowlisted — never use `*` in production
+- Allowed origins must match known frontend domains only
+- Expose only necessary headers in `Access-Control-Expose-Headers`
+- Pre-flight cache (`Access-Control-Max-Age`) should be set to reduce OPTIONS requests
+
+### Rate Limiting
+- All external-facing APIs must have rate limiting configured
+- Authentication endpoints: strict limits (e.g., 5 attempts per minute per IP)
+- Data-retrieval endpoints: reasonable limits per tenant (e.g., 100 requests per minute)
+- Rate limit headers must be included in responses: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+- Use 429 Too Many Requests with `Retry-After` header when limits are exceeded
+
+### Secure Deserialization
+- Never use native Java serialization (`ObjectInputStream`) for untrusted input
+- Use safe formats only: JSON (Jackson/Gson with type validation), Protocol Buffers, or Avro
+- Configure Jackson to reject unknown properties and disable default typing
+- Validate deserialized objects against expected schemas before processing
+
+### Secure HTTP Headers
+All web-facing responses must include:
+- `Strict-Transport-Security: max-age=31536000; includeSubDomains` (HSTS)
+- `Content-Security-Policy` — restrict script sources, no `unsafe-inline` in production
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY` (or `SAMEORIGIN` where iframes are required)
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Permissions-Policy` — disable unused browser features (camera, microphone, geolocation)
+
+### File Upload Validation
+- Validate file type by content (magic bytes), not just extension
+- Enforce maximum file size limits at the adapter boundary
+- Sanitize filenames — strip path traversal characters (`../`, `..\\`)
+- Store uploaded files outside the web root, never serve directly
+- Scan uploaded files for malware before processing (critical for DLP inspection pipeline)
+- Generate unique storage names — never use user-provided filenames for storage
+
+### Cryptographic Standards
+- Minimum TLS 1.2 for all connections; prefer TLS 1.3 where supported
+- Passwords: hash with bcrypt (cost factor 12+), scrypt, or argon2id — never MD5/SHA-1
+- Data integrity: SHA-256 minimum
+- Encryption at rest: AES-256 via AWS KMS or SSE-KMS
+- Key rotation: automated rotation every 90 days for application keys, yearly for KMS keys
+- Never implement custom cryptography — use established libraries only
+
+### Session Management
+- Session tokens must be generated with cryptographically secure random generators
+- Session timeout: 30 minutes of inactivity for admin sessions, 8 hours maximum absolute
+- Invalidate sessions server-side on logout — do not rely on client-side token deletion
+- Concurrent session limit: configurable per tenant (default: 5 active sessions per user)
+- Bind sessions to client metadata (IP range, User-Agent) where practical
 
 ---
 
@@ -105,6 +167,34 @@ Claude MUST apply these when reviewing code or writing code meant for review.
 - Mock external dependencies at adapter boundaries, not inside domain logic
 - Test names describe the scenario: `should_reject_policy_when_classification_is_restricted`
 - No `@Disabled` / `skip` / `xit` without a linked ticket explaining why
+
+---
+
+## Observability Standards
+
+### Structured Logging
+- All log output must be structured JSON — no unstructured text in production
+- Required fields in every log entry: `timestamp`, `level`, `service`, `traceId`, `tenantId`, `message`
+- Log levels: ERROR (actionable failures), WARN (degraded but functional), INFO (business events), DEBUG (development only, disabled in production)
+- Never log request/response bodies — log only: method, path, status code, duration, tenant ID
+
+### Distributed Tracing
+- All services must propagate trace context via W3C Trace Context headers (`traceparent`, `tracestate`)
+- Every inbound request must generate or continue a trace ID
+- Outbound calls (HTTP, SQS, Lambda invocations) must forward the trace context
+- Use AWS X-Ray or OpenTelemetry for instrumentation
+
+### Metrics
+- Instrument the RED metrics for every service: Rate (requests/sec), Errors (error rate %), Duration (latency percentiles)
+- Name metrics consistently: `{service}_{operation}_{unit}` (e.g., `policy_evaluation_duration_ms`)
+- Tag all metrics with: `service`, `environment`, `region`, `tenant_id` (where applicable)
+- Set alerts on: error rate > 1%, p99 latency > SLA threshold, 5xx spike
+
+### Health Checks
+- Every service must expose `/health` (liveness) and `/ready` (readiness) endpoints
+- Health checks must NOT require authentication
+- Readiness checks must verify downstream dependencies (DB, cache, message queue)
+- Liveness checks must be lightweight — no dependency checks, just "process is alive"
 
 ---
 

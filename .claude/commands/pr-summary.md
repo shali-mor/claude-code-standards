@@ -2,8 +2,8 @@ Generate a pull request description from the current branch's changes.
 
 ## Instructions
 
-1. Run `git log main..HEAD --oneline` to see all commits in this branch.
-2. Run `git diff main...HEAD` to see the full diff.
+1. Detect the base branch (check for `main`, `master`, or `develop`). Run `git log <base>..HEAD --oneline` to see all commits.
+2. Run `git diff <base>...HEAD` to see the full diff. If no commits exist on this branch, inform the user.
 
 3. Generate a PR description in this format:
 

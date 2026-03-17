@@ -18,7 +18,7 @@ Scan the entire codebase for security issues. Prioritize findings by severity.
 - Cross-site scripting (XSS): unescaped user content rendered in frontend
 - Insecure direct object references (IDOR): accessing resources without ownership check
 - Missing rate limiting on authentication endpoints
-- Dependencies with known critical/high CVEs (check lock files)
+- Dependencies with known critical/high CVEs — run `npm audit` (Node), `pip audit` (Python), `./gradlew dependencyCheckAnalyze` (Java/Gradle), or `mvn org.owasp:dependency-check-maven:check` (Maven). Parse output for CRITICAL/HIGH severity findings.
 - CORS misconfiguration (overly permissive origins)
 - Missing HTTPS enforcement
 

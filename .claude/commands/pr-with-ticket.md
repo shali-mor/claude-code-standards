@@ -22,7 +22,7 @@ Use the Atlassian MCP tools to read $ARGUMENTS from Jira. Extract:
 - Component/labels
 
 ### Step 2: Analyze Changes
-Run `git log main..HEAD --oneline` and `git diff main...HEAD` to understand all changes in this branch.
+Detect the base branch (check for `main`, `master`, or `develop`). Run `git log <base>..HEAD --oneline` and `git diff <base>...HEAD` to understand all changes in this branch.
 
 ### Step 3: Map Changes to Acceptance Criteria
 For each acceptance criterion from the ticket, identify which code changes satisfy it.
