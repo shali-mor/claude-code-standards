@@ -35,6 +35,13 @@ Scan the entire codebase for security issues. Prioritize findings by severity.
 - Data egress points (API responses, exports, logs) reviewed for data leakage
 - Policy enforcement points exist and are not bypassable
 
+### Forcepoint SDL Compliance
+- Security Definition of Done checklist completed (per PST)
+- Threat model (STRIDE) exists for features changing security boundaries
+- Static analysis: SonarQube + Checkmarx results reviewed
+- Open-source scanning: JFrog Xray results reviewed — no critical/high findings
+- PST design review completed for new external APIs
+
 ## Output Format
 
 For each finding:

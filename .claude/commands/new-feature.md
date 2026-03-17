@@ -38,6 +38,7 @@ Before presenting the code, run the `/review` command mentally against your own 
 - Input validation at boundaries?
 - Tests cover happy path + failure cases?
 - Sensitive data handled per classification?
+- New UI views behind a feature flag?
 
 If any check fails, fix it before showing the code to the user.
 

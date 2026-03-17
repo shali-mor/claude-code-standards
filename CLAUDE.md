@@ -123,6 +123,13 @@ All web-facing responses must include:
 - Concurrent session limit: configurable per tenant (default: 5 active sessions per user)
 - Bind sessions to client metadata (IP range, User-Agent) where practical
 
+### Security Process (SDL)
+- All features require a Security Definition of Done checklist (per PST)
+- Threat modeling (Microsoft STRIDE) is mandatory for features that change security boundaries
+- New external APIs require a design review with the Product Security Team (PST)
+- Security Champions program: each team must have a designated Security Champion
+- Reference: Forcepoint Secure Development Lifecycle (SDL) — Confluence space: PST
+
 ---
 
 ## Code Review Standards
@@ -135,6 +142,19 @@ Claude MUST apply these when reviewing code or writing code meant for review.
 - Include tests that cover the changed behavior
 - Pass all existing tests — no "fix later" broken tests
 - Have no TODO/FIXME without a linked ticket
+
+### Commit Message Format
+- Every commit message MUST begin with a Jira ticket number: `NEO-1234 Fix policy evaluation timeout`
+- Summary line (first line): imperative mood, max 72 characters including ticket
+- Format: `<JIRA-TICKET> <Summary in imperative mood>`
+- Bad: `NEO-1234 Fixed the bug` — Good: `NEO-1234 Fix policy evaluation timeout`
+
+### Branch Naming
+- Branch names: lowercase, alphanumeric, hyphen-separated
+- Format: `<purpose>/<jira-ticket>-<short-description>`
+- Purpose identifiers: `feature/`, `bugfix/`, `hotfix/`
+- Example: `feature/neo-19421-false-positives-portal`
+- The `main` (or `master`) branch is the primary branch — no direct commits allowed
 
 ### Review Checklist (applied by `/review` command)
 - [ ] Dependency rule respected (no inward layer importing outward layer)
@@ -152,7 +172,7 @@ Claude MUST apply these when reviewing code or writing code meant for review.
 ## Testing Standards
 
 ### Coverage Requirements
-- New code: minimum 80% line coverage
+- New code: minimum 85% line coverage (per DLP Quality Guidelines)
 - Critical paths (security decisions, data classification, policy evaluation): 100% branch coverage
 - Coverage must not decrease on any PR
 
@@ -167,6 +187,12 @@ Claude MUST apply these when reviewing code or writing code meant for review.
 - Mock external dependencies at adapter boundaries, not inside domain logic
 - Test names describe the scenario: `should_reject_policy_when_classification_is_restricted`
 - No `@Disabled` / `skip` / `xit` without a linked ticket explaining why
+
+### Static Analysis
+- All code must pass SonarQube Quality Gate before merge — no exceptions
+- SonarQube must be integrated into the CI pipeline (mandatory per Best Practices)
+- Checkmarx SAST scans required for security-critical code paths
+- JFrog Xray for open-source dependency vulnerability scanning
 
 ---
 
@@ -243,6 +269,14 @@ When the architecture gatekeeper flags existing legacy code, evaluate whether fi
 - API calls happen in dedicated hooks/services, never inside components directly
 - TypeScript strict mode — no `any` types except at external API boundaries with runtime validation
 - Accessibility: all interactive elements must be keyboard navigable and have ARIA labels
+- Feature flags: all new UI views or significant UI changes MUST be behind a feature flag before merge
+
+### Go (Services)
+- Go 1.23 or greater
+- Format with `gofmt` — no exceptions
+- Analyze with `go vet` (consider `golangci-lint` as companion)
+- Use Go's built-in test framework for testing and coverage
+- Follow the same Clean Architecture dependency rules as other stacks
 
 ### AWS (Cloud Infrastructure)
 - **Lambda**: single-purpose functions, handle cold starts gracefully, use environment variables for config, log structured JSON, set appropriate timeout/memory, avoid storing state locally, configure DLQ for async invocations
@@ -287,6 +321,16 @@ When the architecture gatekeeper flags existing legacy code, evaluate whether fi
 - All deployments must pass security scanning before production
 - Deployment frequency: every 2 weeks + hotfixes
 - Rollback plan required for every production deployment
+- SonarQube Quality Gate must pass in pipeline — pipeline fails if gate is not met
+- Internal pre-commit hooks available at: `https://github.cicd.cloud.fpdev.io/Forcepoint/pre-commit-hooks`
+
+### Repository Standards
+- Every repository MUST contain a `README.md` at root with: service description, build/test/deploy instructions, contribution guidelines, team contact
+- Every repository SHOULD contain a `CHANGELOG.md` following keepachangelog.com format
+- Every repository MUST contain a `CODEOWNERS` file for PR routing
+- Every repository MUST contain a Pull Request template (`.github/PULL_REQUEST_TEMPLATE.md`)
+- Every repository using Jenkins MUST have a `Jenkinsfile` at root
+- Reference: Best Practices — Confluence space: wsc
 
 ---
 

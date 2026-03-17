@@ -17,6 +17,7 @@ Execute the appropriate scanner:
 - **Java (Gradle)**: `./gradlew dependencyCheckAnalyze` (requires OWASP dependency-check plugin)
 - **Java (Maven)**: `mvn org.owasp:dependency-check-maven:check`
 - **Go**: `govulncheck ./...`
+- **JFrog Xray** (if available): Check Artifactory for Xray scan results on project dependencies
 
 If the scanner is not installed, inform the user how to install it.
 

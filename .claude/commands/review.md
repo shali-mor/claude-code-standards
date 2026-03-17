@@ -28,6 +28,9 @@ Review the current changes against company architecture and security standards.
 - Dead code or unused imports
 - Magic numbers or strings without named constants
 - Method/function exceeding 30 lines (suggest extraction)
+- Commit messages not starting with Jira ticket number (format: `NEO-1234 Fix ...`)
+- Missing SonarQube Quality Gate pass
+- New UI components not behind a feature flag
 
 ### Naming & Convention Issues (WARNING)
 - Class/function name doesn't match the naming conventions in CLAUDE.md
