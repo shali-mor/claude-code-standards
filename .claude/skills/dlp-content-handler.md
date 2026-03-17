@@ -1,6 +1,6 @@
 ---
 name: dlp-content-handler
-description: Enforces safe handling of DLP-processed content. Activates when code touches inspection pipelines, forensics, or classification data.
+description: Enforces safe handling of DLP-processed content in inspection pipelines, forensics, and classification data. Always active — checks relevance based on file context.
 trigger: always
 ---
 
@@ -37,6 +37,11 @@ This system processes CONFIDENTIAL and RESTRICTED content as its core function. 
 - Alerts from endpoints via IoT Core: log alert metadata only, not payload content
 - Endpoint registration data (device keys, certificates): RESTRICTED — never log
 - MQTT payloads may contain sensitive endpoint data — never log full payloads
+
+### Data Residency
+- Forensics data must remain in the region where the tenant is provisioned
+- Cross-region transfer of DLP-scanned content or forensics requires explicit justification
+- See security-enforcer for general multi-region data residency rules
 
 ## When Reviewing Code
 For any code touching DPS services (sync/async/standalone), inspection, or forensics:

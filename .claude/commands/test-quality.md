@@ -8,6 +8,8 @@ Evaluate test quality and coverage against company standards.
 
 ### Coverage Analysis
 - Does a corresponding test file exist?
+- Does new code meet the minimum 85% line coverage threshold (per DLP Quality Guidelines)?
+- For security-critical code: is 100% branch coverage achieved?
 - Are happy-path scenarios covered?
 - Are failure/edge-case scenarios covered?
 - For security-critical code (auth, policy evaluation, data classification): are ALL branches covered?
@@ -43,4 +45,9 @@ SUMMARY:
   Files with tests: X/Y
   Quality issues: N warnings, M blocking
   Verdict: PASS / NEEDS WORK
+```
+
+If no relevant files are found in the repository, output:
+```
+No test files found in this repository. This command is not applicable.
 ```

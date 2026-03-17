@@ -52,3 +52,25 @@ Show the design as:
 - Test plan
 
 Reference specific Confluence pages: "Following the pattern from [Page Title], this service should..."
+
+## Output Format
+
+```
+FEATURE DESIGN: <feature name>
+  Based on: <Confluence page titles referenced>
+
+DOMAIN CHANGES:
+  <entities, value objects, events>
+
+USE CASE:
+  <application service description>
+
+API CONTRACT:
+  <endpoints, methods, request/response shapes>
+
+INTEGRATION POINTS:
+  <how this connects to existing services>
+
+TEST PLAN:
+  <what to test at each layer>
+```

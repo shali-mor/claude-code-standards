@@ -21,6 +21,9 @@ When searching Confluence for Cloud DLP context, prioritize these spaces:
 - **DSA** — Cloud DLP Agent (DSE) tickets
 - **DSPM** — Data Security Posture Management tickets
 - **UEP** — Unified Endpoint tickets
+- **EA** — Enterprise Architecture tickets
+- **WSM** — Web Security Manager tickets
+- **ROC** — DSPM QA/monitoring tickets
 
 ## Instructions
 

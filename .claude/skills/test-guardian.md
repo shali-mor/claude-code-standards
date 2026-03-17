@@ -20,6 +20,11 @@ Every production code change MUST be accompanied by tests. No exceptions.
 - Test file mirrors the source path: `src/domain/Policy.java` → `test/domain/PolicyTest.java`
 - Group tests by behavior, not by method name
 
+### Coverage Requirements
+- New code: minimum 85% line coverage (per DLP Quality Guidelines)
+- Security-critical paths (auth, policy evaluation, data classification): 100% branch coverage
+- Coverage must not decrease on any PR
+
 ### What to Test
 - **Domain logic**: test all business rules with unit tests, no mocks needed (pure logic)
 - **Use cases**: test with mocked output ports, real domain objects
@@ -34,6 +39,6 @@ Every production code change MUST be accompanied by tests. No exceptions.
 
 ### Naming Convention
 Test names must describe the scenario:
-- Java: `shouldRejectPolicy_whenClassificationIsRestricted_andUserLacksPermission`
+- Java: `should_reject_policy_when_classification_restricted_and_user_lacks_permission`
 - Python: `test_reject_policy_when_classification_restricted_and_user_lacks_permission`
 - React: `it('rejects policy when classification is restricted and user lacks permission')`

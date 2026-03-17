@@ -36,6 +36,7 @@ When writing service configuration or startup code:
 ## Metrics
 
 When writing new endpoints or services:
-- Remind to instrument RED metrics: Rate, Errors, Duration
+- Flag missing RED metrics instrumentation: Rate (requests/sec), Errors (error rate %), Duration (latency percentiles)
 - Metric names should follow: `{service}_{operation}_{unit}` (e.g., `policy_evaluation_duration_ms`)
 - All metrics should be tagged with: `service`, `environment`, `region`, `tenant_id`
+- Set alerts on: error rate > 1%, p99 latency > SLA threshold, 5xx spike

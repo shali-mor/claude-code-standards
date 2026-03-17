@@ -10,9 +10,11 @@ Validate repository structure against Forcepoint standards.
 - `Jenkinsfile` — must exist if the repo uses Jenkins CI (check for `.jenkins` or Jenkins references)
 - `.gitignore` — must exist
 
+### Required (BLOCKING if missing)
+- `.github/PULL_REQUEST_TEMPLATE.md` — must exist with sections: What, Why, How tested, Checklist
+
 ### Recommended (WARNING if missing)
 - `CHANGELOG.md` — should exist, following keepachangelog.com format
-- `.github/PULL_REQUEST_TEMPLATE.md` — should exist with sections: What, Why, How tested, Checklist
 - `CLAUDE.md` — should exist for Claude Code standards enforcement
 - `.pre-commit-config.yaml` — should exist for git hooks
 - `.mcp.json` — should exist for Atlassian integration

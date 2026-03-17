@@ -12,6 +12,7 @@ $ARGUMENTS — Jira ticket ID (e.g. DLP-1234)
 - **UEP** — Unified Endpoint tickets
 - **EA** — Enterprise Architecture tickets
 - **WSM** — Web Security Manager tickets
+- **ROC** — DSPM QA/monitoring tickets
 
 ## Instructions
 

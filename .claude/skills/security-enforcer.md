@@ -91,6 +91,8 @@ When writing Java code that handles external input:
 - BLOCK usage of `ObjectInputStream`, `readObject()`, or `java.io.Serializable` for untrusted data
 - BLOCK Jackson `enableDefaultTyping()` or `@JsonTypeInfo` with `Id.CLASS` / `Id.MINIMAL_CLASS`
 - Only allow JSON/Protobuf/Avro deserialization with explicit type binding
+- Python: BLOCK usage of `pickle.loads()` or `yaml.load()` (use `yaml.safe_load()`) for untrusted input
+- Node.js: BLOCK usage of `eval()`, `Function()`, or `vm.runInContext()` for deserialization
 
 ### Secure HTTP Headers
 When writing HTTP response configuration or middleware:
@@ -114,7 +116,7 @@ When writing code involving encryption, hashing, or TLS:
 
 ### Session Management
 When writing session/auth token handling:
-- BLOCK session tokens stored in localStorage (use httpOnly cookies or secure token storage)
+- BLOCK authentication/session tokens stored in localStorage (use httpOnly cookies or secure token storage) — non-sensitive UI preferences in localStorage are acceptable
 - Flag missing session timeout configuration
 - Flag if logout does not invalidate server-side session
 - Flag missing concurrent session limits for admin/tenant-scoped sessions

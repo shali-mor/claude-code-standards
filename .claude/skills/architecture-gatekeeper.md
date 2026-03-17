@@ -37,8 +37,14 @@ Before creating or modifying any file, determine:
 
 ## When You Detect a Violation
 
-Do NOT silently fix it. Instead:
+**For new code:**
 1. State clearly: "This would violate the dependency rule because..."
 2. Explain the correct approach
 3. Ask if the user wants you to implement it correctly
 4. Only then write the compliant code
+
+**For modifications to existing legacy code:**
+1. Evaluate whether fixing the violation is in scope for the current change
+2. If in scope: fix it and explain what you improved
+3. If not in scope: document with a TODO and Jira ticket reference, then proceed with the change
+4. Never make the architecture worse — at minimum, maintain current state

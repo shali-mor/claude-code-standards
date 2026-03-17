@@ -45,3 +45,8 @@ Review Terraform code against Cloud DLP infrastructure standards.
 ```
 
 End with: PASS / NEEDS FIXES / BLOCKED
+
+If no relevant files are found in the repository, output:
+```
+No .tf files found in this repository. This command is not applicable.
+```

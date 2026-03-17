@@ -1,4 +1,4 @@
-Review DPS-specific code changes against the DPS architecture patterns.
+Review DPS (Data Protection Service) code changes against the DPS architecture patterns.
 
 ## Instructions
 
@@ -19,7 +19,7 @@ Review DPS-specific code changes against the DPS architecture patterns.
 - topologySpreadConstraints used for cross-AZ distribution
 
 ### Scaling Configuration (WARNING)
-- Sync services: HPA scaling on container CPU (REST: 600m, CPE: 2400m thresholds)
+- Sync services: HPA scaling on container CPU (REST container: 600m, CPE/Cloud Policy Engine container: 2400m thresholds)
 - Async services: KEDA scaling on SQS queue length
 - Scaling thresholds justified for the workload profile
 

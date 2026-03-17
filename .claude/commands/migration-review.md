@@ -13,7 +13,7 @@ Review database migration files for safety and best practices.
 - `DROP TABLE` / `DROP COLUMN` — data loss risk, requires backup verification
 - `TRUNCATE TABLE` — data loss
 - `ALTER COLUMN` that narrows type (e.g., VARCHAR(255) to VARCHAR(50)) — data truncation
-- Removing `NOT NULL` constraint without default — existing rows may break
+- Adding `NOT NULL` constraint without a default on a column with existing NULL values — migration will fail
 - Removing indexes used by application queries — performance degradation
 
 ### Lock Safety (BLOCKING for large tables)

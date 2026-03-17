@@ -4,6 +4,9 @@ Pull architecture docs from Confluence and update local standards.
 
 You have access to Confluence via the MCP server. Use the Confluence search/read tools to:
 
+## Arguments
+$ARGUMENTS — Confluence space key or page URL (optional — searches all spaces if omitted)
+
 ### Key Confluence Spaces
 When syncing Cloud DLP architecture, prioritize:
 - **IT** — Infrastructure architecture docs (Cloud DLP Architecture, DPS architecture and deployment, DPS in Detail)

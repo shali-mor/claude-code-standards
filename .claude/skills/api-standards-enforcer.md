@@ -35,7 +35,7 @@ When writing error handling or exception mappers:
 When writing response handling or middleware:
 - Every response must include `X-Request-Id` or `X-Trace-Id` for correlation
 - Rate-limited endpoints must include `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
-- Deprecated endpoints must include `Sunset` header with deprecation date
+- Deprecated endpoints must include `Sunset` header with deprecation date — minimum 6-month support window for deprecated versions
 
 ### API Versioning
 When writing new endpoints:

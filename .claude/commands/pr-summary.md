@@ -5,9 +5,9 @@ Generate a pull request description from the current branch's changes.
 1. Detect the base branch (check for `main`, `master`, or `develop`). Run `git log <base>..HEAD --oneline` to see all commits.
 2. Run `git diff <base>...HEAD` to see the full diff. If no commits exist on this branch, inform the user.
 
-2b. Verify all commits follow the format: `<JIRA-TICKET> <Summary in imperative mood>`. Flag any that don't.
+3. Verify all commits follow the format: `<JIRA-TICKET> <Summary in imperative mood>`. Flag any that don't.
 
-3. Generate a PR description in this format:
+4. Generate a PR description in this format:
 
 ```markdown
 ## What
@@ -40,4 +40,4 @@ Generate a pull request description from the current branch's changes.
 - [ ] Sensitive data not logged
 ```
 
-4. Fill in every section based on the actual changes. Do not leave placeholders — if something doesn't apply, write "N/A" or "none".
+5. Fill in every section based on the actual changes. Do not leave placeholders — if something doesn't apply, write "N/A" or "none".

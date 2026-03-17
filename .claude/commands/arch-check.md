@@ -42,3 +42,8 @@ VIOLATIONS:
 
 VERDICT: CLEAN / X VIOLATIONS FOUND
 ```
+
+If no relevant files are found in the repository, output:
+```
+No source code files found in this repository. This command is not applicable.
+```

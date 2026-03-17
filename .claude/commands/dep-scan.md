@@ -54,3 +54,8 @@ LICENSE COMPLIANCE:
 
 VERDICT: PASS / NEEDS FIXES / BLOCKED
 ```
+
+If no relevant files are found in the repository, output:
+```
+No dependency files found in this repository. This command is not applicable.
+```

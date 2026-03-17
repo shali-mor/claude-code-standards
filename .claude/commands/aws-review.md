@@ -63,3 +63,8 @@ For each finding:
 ```
 
 End with severity summary and: PASS / NEEDS FIXES / BLOCKED
+
+If no relevant files are found in the repository, output:
+```
+No AWS-related files found in this repository. This command is not applicable.
+```
