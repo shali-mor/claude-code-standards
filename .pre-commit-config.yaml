@@ -71,12 +71,12 @@ repos:
       - id: terraform_trivy
         name: "Terraform security scan (trivy)"
 
-  # ── Block .tfstate commits ─────────────────────────────────────────
+  # ── Local Hooks ─────────────────────────────────────────────────────
   - repo: local
     hooks:
       - id: branch-naming
         name: "Enforce branch naming convention"
-        entry: bash -c 'BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null); if [ -z "$BRANCH" ]; then exit 0; fi; if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then exit 0; fi; if ! echo "$BRANCH" | grep -qE "^(feature|bugfix|hotfix)/[A-Z]{2,}-[0-9]+-[a-z0-9-]+$"; then echo "BLOCKED: Branch name \"$BRANCH\" does not match pattern: feature/NEO-1234-short-description" >&2; exit 1; fi; exit 0'
+        entry: bash -c 'BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null); if [ -z "$BRANCH" ]; then exit 0; fi; if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then exit 0; fi; if echo "$BRANCH" | grep -qE "^release/"; then exit 0; fi; if ! echo "$BRANCH" | grep -qE "^(feature|bugfix|hotfix)/[A-Z]{2,}-[0-9]+-[a-z0-9-]+$"; then echo "BLOCKED: Branch name \"$BRANCH\" does not match pattern: feature/NEO-1234-short-description" >&2; exit 1; fi; exit 0'
         language: system
         pass_filenames: false
         stages: [pre-commit]
@@ -91,7 +91,7 @@ repos:
         name: "Block .env and credential files"
         entry: bash -c 'echo "BLOCKED: Sensitive files must not be committed" >&2 && exit 1'
         language: system
-        files: '\.(env|credentials|secret)$'
+        files: '(\.env$|\.env\..+|\.credentials$|\.secret$|\.npmrc$|\.pypirc$|\.netrc$|credentials\.(json|ya?ml)$|secrets\.(json|ya?ml)$)'
 
       - id: no-debug-logging
         name: "Warn on debug logging in production code"

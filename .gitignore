@@ -13,6 +13,15 @@ Thumbs.db
 .env.*
 *.credentials
 *.secret
+credentials.json
+credentials.yaml
+credentials.yml
+secrets.json
+secrets.yaml
+secrets.yml
+.npmrc
+.pypirc
+.netrc
 
 # Terraform state
 *.tfstate

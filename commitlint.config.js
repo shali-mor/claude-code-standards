@@ -3,14 +3,6 @@
 // Example: NEO-1234 Fix policy evaluation timeout
 
 module.exports = {
-  extends: ['@commitlint/config-conventional'],
-  rules: {
-    // Disable default type-enum since we use Jira ticket prefix instead
-    'type-enum': [0],
-    'type-empty': [0],
-    'subject-empty': [2, 'never'],
-    'header-max-length': [2, 'always', 72],
-  },
   plugins: [
     {
       rules: {
