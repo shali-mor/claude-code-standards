@@ -29,7 +29,7 @@ Review the current changes against company architecture and security standards.
 - Magic numbers or strings without named constants
 - Method/function exceeding 30 lines (suggest extraction)
 - Commit messages not starting with Jira ticket number (format: `NEO-1234 Fix ...`)
-- Missing SonarQube Quality Gate pass
+- SonarQube Quality Gate not verified (CI-only — remind developer to check before merge)
 - New UI components not behind a feature flag
 
 ### Naming & Convention Issues (WARNING)

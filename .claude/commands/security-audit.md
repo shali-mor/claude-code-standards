@@ -38,7 +38,7 @@ Scan the entire codebase for security issues. Prioritize findings by severity.
 ### Forcepoint SDL Compliance
 - Security Definition of Done checklist completed (per PST)
 - Threat model (STRIDE) exists for features changing security boundaries
-- Static analysis: SonarQube + Checkmarx results reviewed
+- Static analysis: SonarQube + Checkmarx results reviewed (CI-only — ask developer to confirm gate passed)
 - Open-source scanning: JFrog Xray results reviewed — no critical/high findings
 - PST design review completed for new external APIs
 

@@ -258,6 +258,26 @@ Best practice: Git hooks catch the cheap stuff for free. Skills catch the archit
 
 ---
 
+## Local vs. CI — What Runs Where
+
+Some quality tools run locally (in Claude Code or git hooks), others run only in the Jenkins CI pipeline. This template is honest about the boundary.
+
+| Tool | Where It Runs | What Claude Code Does |
+|:-----|:-------------|:----------------------|
+| **SonarQube** | CI pipeline only | Cannot check results. Reminds developer to verify Quality Gate passed before merge. |
+| **Checkmarx SAST** | CI pipeline only | Cannot check results. Reminds developer to confirm no new findings. |
+| **JFrog Xray** | CI pipeline only | `/dep-scan` provides local alternative. Reminds to check Xray for full results. |
+| **gitleaks** | Local (pre-commit) | Also covered by Claude hooks (secret scanner). |
+| **Terraform trivy** | Local (pre-commit) | Also covered by `/terraform-check` command. |
+| **Test coverage %** | CI (SonarQube) | `/test-quality` reviews test quality by reading code but cannot measure exact coverage %. |
+| **Architecture rules** | Local (Claude skills) | **Claude only** — SonarQube cannot detect dependency rule violations or business logic in adapters. |
+| **DLP content handling** | Local (Claude skills) | **Claude only** — no CI tool checks for DLP-scanned content in logs or forensics handling. |
+| **API standards** | Local (Claude skills) | **Claude only** — no CI tool checks pagination, idempotency, or error envelope format. |
+
+Claude Code and the CI pipeline are **complementary layers** — Claude catches semantic and architectural issues locally, CI catches quantitative and mechanical issues at scale.
+
+---
+
 ## Customization
 
 - **Add repo-specific rules** — Edit `CLAUDE.md` in the target repo after copying

@@ -188,11 +188,12 @@ Claude MUST apply these when reviewing code or writing code meant for review.
 - Test names describe the scenario: `should_reject_policy_when_classification_is_restricted`
 - No `@Disabled` / `skip` / `xit` without a linked ticket explaining why
 
-### Static Analysis
-- All code must pass SonarQube Quality Gate before merge — no exceptions
-- SonarQube must be integrated into the CI pipeline (mandatory per Best Practices)
-- Checkmarx SAST scans required for security-critical code paths
-- JFrog Xray for open-source dependency vulnerability scanning
+### Static Analysis (CI Pipeline — not enforced locally)
+These tools run in the Jenkins CI pipeline, not during local development or Claude Code sessions. Claude cannot verify their results directly but will remind developers to check them before merge.
+- **SonarQube**: all code must pass the Quality Gate before merge (bugs, vulnerabilities, coverage, duplication). Pipeline fails if gate is not met.
+- **Checkmarx SAST**: required for security-critical code paths. Results reviewed before merge.
+- **JFrog Xray**: open-source dependency vulnerability scanning. No critical/high findings allowed.
+- Claude Code complements these tools locally: skills catch architecture, security, and DLP-specific issues that SonarQube cannot detect. Use `/dep-scan` for local dependency checks.
 
 ---
 
@@ -321,7 +322,7 @@ When the architecture gatekeeper flags existing legacy code, evaluate whether fi
 - All deployments must pass security scanning before production
 - Deployment frequency: every 2 weeks + hotfixes
 - Rollback plan required for every production deployment
-- SonarQube Quality Gate must pass in pipeline — pipeline fails if gate is not met
+- SonarQube Quality Gate must pass in pipeline — pipeline fails if gate is not met (CI-only, not checked locally)
 - Internal pre-commit hooks available at: `https://github.cicd.cloud.fpdev.io/Forcepoint/pre-commit-hooks`
 
 ### Repository Standards
