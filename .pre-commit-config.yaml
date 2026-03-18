@@ -76,33 +76,72 @@ repos:
     hooks:
       - id: branch-naming
         name: "Enforce branch naming convention"
-        entry: bash -c 'BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null); if [ -z "$BRANCH" ]; then exit 0; fi; if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then exit 0; fi; if echo "$BRANCH" | grep -qE "^release/"; then exit 0; fi; if ! echo "$BRANCH" | grep -qE "^(feature|bugfix|hotfix)/[A-Z]{2,}-[0-9]+-[a-z0-9-]+$"; then echo "BLOCKED: Branch name \"$BRANCH\" does not match pattern: feature/NEO-1234-short-description" >&2; exit 1; fi; exit 0'
+        entry: bash
+        args:
+          - -c
+          - |
+            BRANCH=$(git symbolic-ref --short HEAD 2>/dev/null)
+            if [ -z "$BRANCH" ]; then exit 0; fi
+            if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ] || [ "$BRANCH" = "develop" ]; then exit 0; fi
+            if echo "$BRANCH" | grep -qE "^release/"; then exit 0; fi
+            if ! echo "$BRANCH" | grep -qE "^(feature|bugfix|hotfix)/[A-Z]{2,}-[0-9]+-[a-z0-9-]+$"; then
+              echo "BLOCKED: Branch name does not match pattern: feature/NEO-1234-short-description" >&2
+              exit 1
+            fi
+            exit 0
         language: system
         pass_filenames: false
         stages: [pre-commit]
 
       - id: no-tfstate
         name: "Block .tfstate files"
-        entry: bash -c 'echo "BLOCKED: .tfstate files must not be committed" >&2 && exit 1'
+        entry: bash
+        args: ["-c", "echo 'BLOCKED - .tfstate files must not be committed' >&2 && exit 1"]
         language: system
         files: '\.tfstate'
 
       - id: no-env-files
         name: "Block .env and credential files"
-        entry: bash -c 'echo "BLOCKED: Sensitive files must not be committed" >&2 && exit 1'
+        entry: bash
+        args: ["-c", "echo 'BLOCKED - Sensitive files must not be committed' >&2 && exit 1"]
         language: system
         files: '(\.env$|\.env\..+|\.credentials$|\.secret$|\.npmrc$|\.pypirc$|\.netrc$|credentials\.(json|ya?ml)$|secrets\.(json|ya?ml)$)'
 
       - id: no-debug-logging
-        name: "Warn on debug logging in production code"
-        entry: bash -c 'FOUND=0; for f in "$@"; do case "$f" in *.java) if grep -nE "System\.out\.print" "$f"; then echo "BLOCKED: System.out in $f" >&2; FOUND=1; fi;; *.ts|*.tsx|*.js|*.jsx) if grep -nE "console\.(log|debug|info)" "$f" | grep -vE "(eslint-disable|\.test\.|\.spec\.)" | head -3; then echo "BLOCKED: console.log in $f" >&2; FOUND=1; fi;; *.py) if grep -nE "^\s*print\(" "$f" | grep -v "noqa" | head -3; then echo "BLOCKED: print() in $f" >&2; FOUND=1; fi;; esac; done; exit $FOUND'
+        name: "Block debug logging in production code"
+        entry: bash
+        args:
+          - -c
+          - |
+            FOUND=0
+            for f in "$@"; do
+              case "$f" in
+                *.java) if grep -nE "System\.out\.print" "$f"; then echo "BLOCKED: System.out in $f" >&2; FOUND=1; fi;;
+                *.ts|*.tsx|*.js|*.jsx) if grep -nE "console\.(log|debug|info)" "$f" | grep -vE "(eslint-disable|\.test\.|\.spec\.)" | head -3; then echo "BLOCKED: console.log in $f" >&2; FOUND=1; fi;;
+                *.py) if grep -nE "^\s*print\(" "$f" | grep -v "noqa" | head -3; then echo "BLOCKED: print() in $f" >&2; FOUND=1; fi;;
+              esac
+            done
+            exit $FOUND
+          - --
         language: system
         types: [file]
         files: '\.(java|ts|tsx|js|jsx|py)$'
 
       - id: skipped-tests-need-tickets
         name: "Skipped tests must reference a ticket"
-        entry: bash -c 'for f in "$@"; do if grep -nE "@Disabled|@Ignore|xdescribe|xit|xtest|test\.skip|it\.skip|describe\.skip|unittest\.skip|pytest\.mark\.skip" "$f" | grep -vE "[A-Z]{2,}-[0-9]+"; then echo "BLOCKED: Skipped test without ticket reference in $f" >&2; exit 1; fi; done; exit 0'
+        entry: bash
+        args:
+          - -c
+          - |
+            FAIL=0
+            for f in "$@"; do
+              if grep -nE "@Disabled|@Ignore|xdescribe|xit|xtest|test\.skip|it\.skip|describe\.skip|unittest\.skip|pytest\.mark\.skip" "$f" | grep -vE "[A-Z]{2,}-[0-9]+"; then
+                echo "BLOCKED: Skipped test without ticket reference in $f" >&2
+                FAIL=1
+              fi
+            done
+            exit $FAIL
+          - --
         language: system
         types: [file]
         files: '\.(java|ts|tsx|js|jsx|py)$'
@@ -112,14 +151,31 @@ repos:
     hooks:
       - id: run-tests
         name: "Run tests before push"
-        entry: bash -c 'if [ -f "package.json" ]; then npm test; elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then ./gradlew test; elif [ -f "pom.xml" ]; then ./mvnw test; elif [ -f "pytest.ini" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then pytest; else echo "No test runner detected — skipping"; fi'
+        entry: bash
+        args:
+          - -c
+          - |
+            if [ -f "package.json" ]; then npm test
+            elif [ -f "build.gradle" ] || [ -f "build.gradle.kts" ]; then ./gradlew test
+            elif [ -f "pom.xml" ]; then ./mvnw test
+            elif [ -f "pytest.ini" ] || [ -f "pyproject.toml" ] || [ -f "setup.py" ]; then pytest
+            else echo "No test runner detected — skipping"
+            fi
         language: system
         pass_filenames: false
         stages: [pre-push]
 
       - id: check-no-fixme
         name: "No FIXME/TODO without ticket in pushed code"
-        entry: bash -c 'if git diff origin/HEAD...HEAD --name-only | xargs grep -nE "(TODO|FIXME|HACK|XXX)" 2>/dev/null | grep -vE "[A-Z]{2,}-[0-9]+" | head -10; then echo "BLOCKED: TODO/FIXME without ticket reference" >&2; exit 1; fi; exit 0'
+        entry: bash
+        args:
+          - -c
+          - |
+            if git diff origin/HEAD...HEAD --name-only 2>/dev/null | xargs -d '\n' grep -nE "(TODO|FIXME|HACK|XXX)" 2>/dev/null | grep -vE "[A-Z]{2,}-[0-9]+" | head -10; then
+              echo "BLOCKED: TODO/FIXME without ticket reference" >&2
+              exit 1
+            fi
+            exit 0
         language: system
         pass_filenames: false
         stages: [pre-push]
